@@ -11,7 +11,7 @@ public class Main {
         String[] actions2 = new String[]{"/", "\\+", "\\*", "-"};
         int index = -1;
         int i = 0;
-        while (index < 0 && i < 4) {
+        while (index < 0 && i < 6) {
             index = data.indexOf(actions[i]);
             i++;
         }
