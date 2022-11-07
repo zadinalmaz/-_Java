@@ -7,92 +7,95 @@ public class Main {
         System.out.println("Введите выражение. Например 6+2; X-III");
         Scanner sc = new Scanner(System.in);
         String data = sc.nextLine();
-        String[] actions = {"/", "+", "*", "-"};
-        String[] actions2 = new String[]{"/", "\\+", "\\*", "-"};
-        int index = -1;
-        int i = 0;
-        while (index < 0 && i < 6) {
-            index = data.indexOf(actions[i]);
-            i++;
-        }
+        System.out.println(calc(data));
+        sc.close();
+    }
 
-        if (index == -1) {
-            System.out.println("Неверное выражение");
-            return;
-        }
-        String separation = actions2[i - 1];
-        String[] subStr;
-        subStr = data.split(separation);
 
-        int index2 = -1;
-        i = 0;
-        while (index2 < 0 && i < 4) {
-            index2 = subStr[1].indexOf(actions[i]);
-            i++;
-        }
-        if (index2 != -1 | subStr.length > 2) {
-            System.out.print("Неверно: должно быть два операнда и один оператор (+, -, /, *), например 5+7");
-            return;
-        }
-
-        char action;
-        action = data.charAt(index);
-
-        int A, B;
-
-        boolean[] h = new boolean[subStr[0].length()];
-        boolean[] h1 = new boolean[subStr[1].length()];
-        for (int p = 0; p < subStr[0].length(); p++) {
-            h[p] = Character.isDigit(subStr[0].charAt(p));
-        }
-        for (int p = 0; p < subStr[1].length(); p++) {
-            h1[p] = Character.isDigit(subStr[1].charAt(p));
-        }
-        int R = 0;
+    public static String calc(String input) {
         try {
-            if (checkArray(h)&&checkArray(h1)){
-                A = Integer.parseInt(subStr[0]);
-                B = Integer.parseInt(subStr[1]);
-            } else {
-                A = Roman.valueOf(subStr[0]).toInt();
-                B = Roman.valueOf(subStr[1]).toInt();
-                R = 1;
+            String[] actions = {"/", "+", "*", "-"};
+            String[] actions2 = new String[]{"/", "\\+", "\\*", "-"};
+            int index = -1;
+            int i = 0;
+            while (index < 0 && i < 6) {
+                index = input.indexOf(actions[i]);
+                i++;
             }
-        }
-        catch (IllegalArgumentException e){
-            System.out.println("Неправильный формат чисел");
-            return;
-        }
 
-        if ( A < 1 | A > 10 | B < 1 | B > 10){
-            System.out.println("Число FAILED. Вы вышли за диопазон чисел");
-            return;
-        };
+            if (index == -1) {
+                throw new RuntimeException("Неверное выражение");
+            }
+            String separation = actions2[i - 1];
+            String[] subStr;
+            subStr = input.split(separation);
 
-        int result = 0;
-        switch (action) {
-            case ('/'):
-                result = A / B;
-                break;
-            case ('*'):
-                result = A * B;
-                break;
-            case ('+'):
-                result = A + B;
-                break;
-            case ('-'):
-                result = A - B;
-                break;
+            int index2 = -1;
+            i = 0;
+            while (index2 < 0 && i < 4) {
+                index2 = subStr[1].indexOf(actions[i]);
+                i++;
+            }
+            if (index2 != -1 | subStr.length > 2) {
+                throw new RuntimeException("Неверно: должно быть два операнда и один оператор (+, -, /, *), например 5+7");
+            }
 
-            default:
-                throw new IllegalStateException("Unexpected value: " + action);
+            char action;
+            action = input.charAt(index);
+
+            int A = 0, B = 0;
+
+            boolean[] h = new boolean[subStr[0].length()];
+            boolean[] h1 = new boolean[subStr[1].length()];
+            for (int p = 0; p < subStr[0].length(); p++) {
+                h[p] = Character.isDigit(subStr[0].charAt(p));
+            }
+            for (int p = 0; p < subStr[1].length(); p++) {
+                h1[p] = Character.isDigit(subStr[1].charAt(p));
+            }
+            int R = 0;
+            try {
+                if (checkArray(h) && checkArray(h1)) {
+                    A = Integer.parseInt(subStr[0]);
+                    B = Integer.parseInt(subStr[1]);
+                } else {
+                    A = Roman.valueOf(subStr[0]).toInt();
+                    B = Roman.valueOf(subStr[1]).toInt();
+                    R = 1;
+                }
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException("Неправильный формат чисел");
+            }
+
+            if (A < 1 | A > 10 | B < 1 | B > 10) {
+                throw new RuntimeException("Число FAILED. Вы вышли за диопазон чисел");
+            }
+            ;
+
+            int result = 0;
+            switch (action) {
+                case ('/'):
+                    result = A / B;
+                    break;
+                case ('*'):
+                    result = A * B;
+                    break;
+                case ('+'):
+                    result = A + B;
+                    break;
+                case ('-'):
+                    result = A - B;
+                    break;
+
+                default:
+                    throw new IllegalStateException("Unexpected value: " + action);
+            }
+
+            return R == 1 ? String.valueOf(getByValue(result)) : String.valueOf(result);
+
+        } catch (Exception e) {
+            return e.getMessage();
         }
-        Roman result2 = null;
-        if( R == 1) {
-            result2 = getByValue(result);
-            System.out.println(result2);
-        }
-        else System.out.println(result);
     }
 
     public static boolean checkArray(boolean[] checked) {
